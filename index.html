@@ -1,1 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chirutha E-RIDE</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
 
+    <section id="programme-entry" class="screen active">
+        <div class="entry-container">
+            <img src="images/logo.png" alt="Chirutha Logo" class="logo" />
+            <h1>Welcome to Chirutha E- RIDE</h1>
+            <p>Charged to Cheer,Design to Roar</p>
+            <button onclick="navigateTo('login')">Get Started</button>
+            <p class="footer-text">By proceeding, you consent to our Terms of Service and Privacy Policy</p>
+        </div>
+    </section>
+
+    <section id="login" class="screen">
+        <div class="login-container">
+            <h2>Login</h2>
+            <p class="subtitle">Get started by logging in or creating an account.</p>
+            <input type="text" placeholder="Email or Mobile" />
+            <input type="password" placeholder="Password" />
+            <button onclick="event.preventDefault(); navigateTo('home')">Login</button>
+            <p class="or-text">Or continue with</p>
+            <div class="otp-buttons">
+                <button>Mobile OTP</button>
+                <button>Email OTP</button>
+            </div>
+            <p class="footer-text">By continuing, you agree to our Terms of Service and Privacy Policy.</p>
+        </div>
+    </section>
+
+    <section id="home" class="screen">
+        <div class="home-container">
+            <h2>Library</h2>
+            <input type="text" placeholder="Search trips" class="search-box" />
+            <h2>Welcome to Chirutha</h2>
+            <div class="home-buttons">
+                <button onclick="navigateTo('dashboard')">Dashboard</button>
+                <button onclick="navigateTo('safety')">Emergency Safety</button>
+                <button onclick="navigateTo('control-panel')">Control Panel</button>
+                <button onclick="navigateTo('my-vehicle')">My Vehicle</button>
+                <button onclick="navigateTo('location')">Vehicle Location</button>
+                <button onclick="navigateTo('trips')">Vehicle Trips</button>
+                <button onclick="navigateTo('profile')">Profile</button>
+                <button onclick="navigateTo('account-settings')">Account & Settings</button>
+                <button onclick="navigateTo('contact')">Contact Us</button>
+                <div class="bottom-nav">
+                    <div class="nav-item" data-target="profile">
+                        <img src="images/profile.png"><br>Profile
+                    </div>
+                    <div class="nav-item" data-target="location">
+                        <img src="images/location.png"><br>Location
+                    </div>
+                    <div class="nav-item" data-target="my-vehicle">
+                        <img src="images/vehicle.png"><br>Vehicle
+                    </div>
+                    <div class="nav-item" data-target="account-settings">
+                        <img src="images/icons/settings.png"><br>Setting
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="dashboard" class="screen">
+        <div class="screen-header">Dashboard</div>
+        <div class="screen-content">
+            <p>Battery: 85%</p>
+            <p>Speed: 60 km/h</p>
+            <p>Range: 220 km</p>
+            <button onclick="navigateTo('home')">Back</button>
+        </div>
+    </section>
+
+    <section id="safety" class="screen">
+        <div class="screen-header">Emergency Safety</div>
+        <button onclick="navigateTo('home')">Back</button>
+        <div class="search-box">
+            <input type="text" placeholder="Search" />
+        </div>
+        <div class="section-title">Emergency Assistance</div>
+        <div class="card">
+            <div class="card-icon">
+                <i class="fas fa-phone"></i>
+            </div>
+            <div class="card-content">
+                <div class="card-title">SOS Emergency</div>
+                <div class="card-desc">Call for immediate help in critical situations</div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-icon">
+                <i class="fas fa-car"></i>
+            </div>
+            <div class="card-content">
+                <div class="card-title">Roadside Assistance</div>
+                <div class="card-desc">Contact roadside assistance for vehicle issues</div>
+            </div>
+        </div>
+        <div class="section-title">Safety Guides</div>
+        <div class="card">
+            <div class="card-icon">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <div class="card-content">
+                <div class="card-title">Vehicle Emergency Guide</div>
+                <div class="card-desc">Learn how to handle common vehicle emergencies</div>
+            </div>
+        </div>
+        </section>
+
+    <section id="control-panel" class="screen">
+        <div class="screen-header">Control Panel</div>
+        <div class="screen-content">
+            <button onclick="navigateTo('home')">Back</button>
+            <p>AC: On</p>
+            <p>Headlights: Auto</p>
+            <p>Windows: Closed</p>
+            <div class="vehicle-image-container">
+                <img src="images/vehicle-image.png" alt="Vehicle" class="vehicle-image" />
+            </div>
+            <div class="actions-section">
+                <h3 class="section-title">Actions</h3>
+                <div class="action-row">
+                    <div class="action-icon"><img src="images/icons/lock.svg" alt="Lock" /></div>
+                    <span class="action-label">Lock</span>
+                    <label class="switch">
+                        <input type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-status">OFF</span>
+                </div>
+                <div class="action-row">
+                    <div class="action-icon"><img src="images/icons/unlock.svg" alt="Unlock" /></div>
+                    <span class="action-label">Unlock</span>
+                    <label class="switch">
+                        <input type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-status">OFF</span>
+                </div>
+                <div class="action-row">
+                    <div class="action-icon"><img src="images/icons/lights.svg" alt="Lights" /></div>
+                    <span class="action-label">Lights</span>
+                    <label class="switch">
+                        <input type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-status">OFF</span>
+                </div>
+                <div class="action-row">
+                    <div class="action-icon"><img src="images/icons/horn.svg" alt="Horn" /></div>
+                    <span class="action-label">Horn</span>
+                    <label class="switch">
+                        <input type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-status">OFF</span>
+                </div>
+                <div class="action-row">
+                    <div class="action-icon"><img src="images/icons/motor.svg" alt="Motor" /></div>
+                    <span class="action-label">Start/Stop Motor</span>
+                    <label class="switch">
+                        <input type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-status">OFF</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="my-vehicle" class="screen">
+        <div class="screen-header">My Vehicle</div>
+        <div class="screen-content">
+            <button onclick="navigateTo('home')">Back</button>
+            <div class="container">
+                <div class="top-bar">
+                    <div class="back-arrow" onclick="goBack()">&#8592;</div>
+                    <h1>My Vehicle</h1>
+                    <div></div>
+                </div>
+                <div class="image-container">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/NIU_Electric_Scooter.jpg/800px-NIU_Electric_Scooter.jpg" alt="Vehicle" />
+                </div>
+                <div class="section">
+                    <div class="section-title">Battery</div>
+                    <div class="battery-level">
+                        <span>Battery Level</span>
+                        <span>75%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">Location</div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Simple_map_example.png/480px-Simple_map_example.png" alt="Map" class="location-img" />
+                </div>
+                <div class="section">
+                    <div class="section-title">Quick Info</div>
+                    <div class="quick-info">
+                        <div class="info-box">
+                            <span class="info-label">Model</span>
+                            <span>Scooty X1</span>
+                        </div>
+                        <div class="info-box">
+                            <span class="info-label">Range</span>
+                            <span>45 miles</span>
+                        </div>
+                        <div class="info-box">
+                            <span class="info-label">Last Updated</span>
+                            <span>2 hours ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="location" class="screen">
+        <div class="screen-header">Vehicle Location</div>
+        <button onclick="navigateTo('home')">Back</button>
+        <div class="screen-content">
+            <p>Your Vehicle Location:,Area</p>
+            <p>Your Location:,Area</p>
+            <p> </p>
+            <div class="header">
+                <div class="back-arrow" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
+                Locate
+            </div>
+            <div class="search-box">
+                <input type="text" placeholder="Search" />
+            </div>
+            <div id="map"></div>
+            <div class="footer-buttons">
+                <button class="locate-btn" onclick="locateVehicle()">Locate my vehicle</button>
+                <button class="track-btn">Track if stolen</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="trips" class="screen">
+        <div class="screen-header">Vehicle Trips</div>
+        <button onclick="navigateTo('home')">Back</button>
+        <div class="screen-content">
+            <div class="trips-screen">
+                <div class="header"></div>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Search trips" />
+                </div>
+                <div class="section-label">Last 30 days</div>
+                <div class="trip-card">
+                    <div class="icon">📍</div>
+                    <div class="trip-info">
+                        <div class="trip-title">Home to Work</div>
+                        <div class="trip-subtitle">12.3 mi · 3.2 kWh</div>
+                    </div>
+                </div>
+                <div class="trip-card">
+                    <div class="icon">📍</div>
+                    <div class="trip-info">
+                        <div class="trip-title">Work to Gym</div>
+                        <div class="trip-subtitle">15.7 mi · 4.1 kWh</div>
+                    </div>
+                </div>
+                <div class="trip-card">
+                    <div class="icon">📍</div>
+                    <div class="trip-info">
+                        <div class="trip-title">Gym to Home</div>
+                        <div class="trip-subtitle">8.5 mi · 2.5 kWh</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="profile" class="screen">
+        <div class="screen-header">Profile</div>
+        <div class="screen-content">
+            <button onclick="navigateTo('home')">Back</button>
+            <div class="header">
+                <div class="title">Account</div>
+            </div>
+            <div class="profile">
+                <img src="https://via.placeholder.com/100" alt="Profile Picture" />
+                <h2>K RAJESH</h2>
+                <p>Premium Member</p>
+            </div>
+            <div class="section-title">Account</div>
+            <div class="menu-item"><span>Personal Information</span> <span class="arrow">›</span></div>
+            <div class="menu-item"><span>Vehicle Details</span> <span class="arrow">›</span></div>
+            <div class="menu-item"><span>Payment Methods</span> <span class="arrow">›</span></div>
+            <div class="menu-item"><span>Notifications</span> <span class="arrow">›</span></div>
+            <div class="section-title">Settings</div>
+            <div class="menu-item"><span>App Preferences</span> <span class="arrow">›</span></div>
+            <div class="menu-item"><span>Help & Support</span> <span class="arrow">›</span></div>
+            <div class="menu-item"><span>About</span> <span class="arrow">›</span></div>
+        </div>
+    </section>
+
+    <section id="account-settings" class="screen">
+        <div class="screen-header">Account & Settings</div>
+        <div class="screen-content">
+            <button onclick="navigateTo('home')">Back</button>
+            <p>Password: ******</p>
+            <p>Notifications: Enabled</p>
+            <p>Language: English</p>
+            <div class="top-bar">
+                <h1>Settings</h1>
+            </div>
+            <div class="section">
+                <h2>Vehicle</h2>
+                <div class="settings-item">
+                    <div class="label-group">
+                        <p class="label">Vehicle name</p>
+                        <p class="value">Scooty</p>
+                    </div>
+                    <button class="arrow">Next</button>
+                </div>
+                <div class="settings-item">
+                    <div class="label-group">
+                        <p class="label">Firmware updates</p>
+                        <p class="value">Firmware updates available</p>
+                    </div>
+                    <button class="arrow">Next</button>
+                </div>
+            </div>
+            <div class="section">
+                <h2>Notifications</h2>
+                <div class="settings-item">
+                    <p class="label">Firmware updates</p>
+                    <label class="switch">
+                        <input type="checkbox" checked />
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="section">
+                <h2>Support</h2>
+                <div class="settings-item">
+                    <p class="label">Contact support</p>
+                    <button class="arrow">Next</button>
+                </div>
+            </div>
+            <nav class="bottom-nav">
+                <button onclick="navigateTo('home')"><img src="images/icons/home.svg" alt="Home"></button>
+                <button onclick="navigateTo('location')"><img src="images/icons/location.svg" alt="Location"></button>
+                <button onclick="navigateTo('my-vehicle')"><img src="images/icons/vehicle.svg" alt="Vehicle"></button>
+                <button onclick="navigateTo('profile')"><img src="images/icons/profile.svg" alt="Profile"></button>
+            </nav>
+        </div>
+    </section>
+
+    <section id="contact" class="screen">
+        <div class="screen-header">Contact Us</div>
+        <div class="screen-content">
+            <p>Email: support@chirutha.com</p>
+            <p>Phone: +91 8000000000</p>
+            <button onclick="navigateTo('home')">Next</button>
+        </div>
+    </section>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
