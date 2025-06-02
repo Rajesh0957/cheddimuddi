@@ -1,138 +1,706 @@
-// Function to navigate between screens
-function navigateTo(screenId) {
-    const screens = document.querySelectorAll('.screen');
-    screens.forEach(screen => screen.classList.remove('active'));
-    const target = document.getElementById(screenId);
-    if (target) {
-        target.classList.add('active');
-    }
-
-    // Call initializeMap when navigating to the 'location' screen
-    // This check 'typeof L !== 'undefined'' ensures Leaflet library is loaded before calling its functions
-    if (screenId === 'location' && typeof L !== 'undefined') {
-        initializeMap();
-    }
+/* Reset and base */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0a0f2c, #1b1f4c);
+    color: white;
+    height: 100%;
+    overflow: hidden; /* Hide overflow for screen transitions */
 }
 
-// Function to go back in browser history
-function goBack() {
-    window.history.back();
+.screen {
+    display: none; /* Hidden by default */
+    height: 100vh;
+    width: 100vw;
+    padding: 20px;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: linear-gradient(135deg, #0f1a3a, #233e7d); /* Screen specific background */
+    overflow-y: auto; /* Allow scrolling for content that exceeds screen height */
 }
 
-// Declare map variable globally so it can be accessed by initializeMap and locateVehicle
-let map;
-let userMarker; // Also declare userMarker globally for updating user's location
-
-// Function to initialize the Leaflet map
-function initializeMap() {
-    // Check if map already exists to prevent re-initialization
-    // If it exists, remove it before creating a new one to avoid errors
-    if (map) {
-        map.remove();
-    }
-
-    // Default location (e.g., Hafeezpet, Hyderabad)
-    const defaultLat = 17.4715;
-    const defaultLng = 78.3570;
-
-    // Initialize the map on the 'map' div with a default view
-    map = L.map('map').setView([defaultLat, defaultLng], 15);
-
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-
-    // Add a marker for the vehicle's default location
-    L.marker([defaultLat, defaultLng])
-        .addTo(map)
-        .bindPopup("Vehicle Location: Hafeezpet, Hyderabad")
-        .openPopup();
+.screen.active {
+    display: block; /* Show active screen */
+    animation: fadeIn 0.7s ease-in-out; /* Smooth fade-in animation */
 }
 
-// Function to locate the user's vehicle (or user's current location)
-function locateVehicle() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 
-                // Set map view to user's current location
-                map.setView([lat, lng], 16);
+/* Shared Components */
+.screen-header {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
+    text-align: center; /* Center header for consistent look */
+}
 
-                // Update existing marker or create a new one
-                if (userMarker) {
-                    userMarker.setLatLng([lat, lng]);
-                } else {
-                    userMarker = L.marker([lat, lng])
-                        .addTo(map)
-                        .bindPopup("Your Current Location")
-                        .openPopup();
-                }
-            },
-            (error) => {
-                // Handle geolocation errors
-                console.error("Geolocation error:", error);
-                alert("Unable to retrieve your location. Please enable location services and try again.");
-            }
-        );
-    } else {
-        alert("Geolocation is not supported by your browser.");
-    }
+.screen-content p {
+    margin: 10px 0;
+    font-size: 18px;
+    text-align: center; /* Center content text */
+}
+
+button {
+    padding: 12px 24px;
+    margin: 10px auto; /* Center buttons if they are block level */
+    display: block; /* Make buttons block level for centering */
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #007bff, #00c6ff);
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 198, 255, 0.4);
+}
+
+/* Entry Screen */
+.entry-container {
+    text-align: center;
+    margin-top: 15vh; /* Center vertically */
+    padding: 0 20px; /* Add some padding */
+}
+
+.entry-container .logo {
+    width: 120px;
+    height: auto; /* Maintain aspect ratio */
+    margin-bottom: 20px;
+}
+
+.entry-container h1 {
+    font-size: 32px;
+    margin: 10px 0;
+    line-height: 1.2;
+}
+
+.entry-container p {
+    font-size: 18px;
+    opacity: 0.8;
+    margin-bottom: 30px;
+}
+
+.entry-container .footer-text {
+    font-size: 14px;
+    opacity: 0.7;
+    margin-top: 40px;
+}
+
+/* Login Screen */
+.login-container {
+    max-width: 350px; /* Slightly wider for better input fields */
+    margin: 15vh auto;
+    text-align: center;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.2); /* Slightly darker background */
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.login-container h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.login-container .subtitle {
+    font-size: 16px;
+    color: #ccc;
+    margin-bottom: 25px;
+}
+
+.login-container input {
+    width: calc(100% - 20px); /* Adjust width for padding */
+    padding: 12px;
+    margin: 12px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+    color: white;
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+.login-container input::placeholder {
+    color: #bbb;
+}
+
+.login-container .or-text {
+    margin: 20px 0;
+    font-size: 15px;
+    color: #aaa;
+}
+
+.login-container .otp-buttons {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.login-container .otp-buttons button {
+    width: 100%; /* Make buttons fill the gap */
+    background: #4a4a4a; /* Darker background for OTP buttons */
+    margin: 0; /* Remove default button margin */
+}
+
+/* Home Screen */
+.home-container {
+    text-align: center;
+    padding-top: 40px;
+}
+
+.home-container h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.search-box {
+    width: calc(100% - 40px); /* Adjust for padding */
+    padding: 12px;
+    margin-bottom: 30px;
+    border-radius: 25px; /* Rounded search box */
+    border: none;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.search-box::placeholder {
+    color: #ddd;
+}
+
+.home-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 15px; /* Increased gap */
+    margin-top: 30px;
+    padding: 0 20px; /* Add padding to grid */
+}
+
+.home-buttons button {
+    width: 100%;
+    min-height: 80px; /* Make buttons taller */
+    font-size: 18px;
+    background: linear-gradient(135deg, #2a3a6a, #4a6a9a); /* Different gradient for home buttons */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Trips Screen */
+.trips-screen {
+    padding: 10px 16px;
+}
+
+.search-container {
+    margin-bottom: 20px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.section-label {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 20px 0 10px;
+}
+
+.trip-card {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255,255,255,0.05);
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.trip-card:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.trip-card .icon {
+    font-size: 24px;
+    margin-right: 12px;
+    flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.trip-info .trip-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.trip-info .trip-subtitle {
+    font-size: 14px;
+    color: #ccc;
+}
+
+/* Profile Screen */
+.profile {
+    text-align: center;
+    margin-top: 16px;
+}
+
+.profile img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover; /* Ensure image covers the area */
+    border: 3px solid #00c6ff; /* A small border to highlight */
+}
+
+.profile h2 {
+    margin: 12px 0 4px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.profile p {
+    color: #aaa;
+    font-size: 14px;
+    margin: 0;
+}
+
+.section-title {
+    font-weight: 600;
+    font-size: 15px;
+    padding: 20px 16px 6px;
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.1); /* Subtle separator */
+    margin-bottom: 10px;
+}
+
+.menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid #333;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.menu-item:hover {
+    background-color: rgba(255,255,255,0.08);
+}
+
+.menu-item span {
+    font-size: 14px;
+}
+
+.menu-item .arrow {
+    font-size: 18px;
+    color: #888;
+}
+
+/* Settings Screen */
+.top-bar h1 {
+    text-align: center;
+    padding: 20px 0 10px;
+    font-size: 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.section {
+    margin: 20px;
+}
+
+.section h2 {
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+.settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+.settings-item .label-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.value {
+    font-size: 13px;
+    color: #ccc;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 20px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #1e1e1e;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-top: 1px solid #333;
+    z-index: 1000;
+}
+
+.bottom-nav .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 12px;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.bottom-nav .nav-item.active {
+    color: white;
+}
+
+.bottom-nav .nav-item i { /* For Font Awesome icons */
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.bottom-nav .nav-item img { /* For image icons */
+    width: 24px; /* Adjust size as needed */
+    height: 24px;
+    margin-bottom: 4px;
+    filter: grayscale(100%) opacity(0.7); /* Desaturate non-active icons */
+    transition: filter 0.3s ease;
+}
+
+.bottom-nav .nav-item.active img {
+    filter: grayscale(0%) opacity(1); /* Full color for active icon */
 }
 
 
-// Event listener to run when the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-    // Initial navigation to the entry screen
-    navigateTo('programme-entry');
+.bottom-nav button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: flex; /* Allow button to contain column layout */
+    flex-direction: column;
+    align-items: center;
+    color: #aaa;
+    font-size: 12px;
+}
 
-    // Fix Login Navigation (assuming the button has an ID or is the first button in the login screen)
-    // It's better to add a specific ID to the login button, e.g., <button id="loginBtn">Login</button>
-    const loginBtn = document.querySelector('#login button'); // Selects the first button inside the #login screen
-    if (loginBtn) {
-        loginBtn.addEventListener('click', (event) => {
-            event.preventDefault(); // Prevent default form submission or page reload
-            navigateTo('home');    // Navigate to Home screen
-        });
+.bottom-nav button:hover {
+    transform: none; /* No transform on hover for nav buttons */
+    color: white;
+}
+
+.bottom-nav button img {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+}
+
+/* Contact Screen */
+#contact .screen-content p {
+    font-size: 16px;
+    margin: 8px 0;
+}
+
+/* Map specific styles */
+#map {
+    height: 300px; /* Set a height for the map container */
+    width: 100%;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.back-arrow {
+    font-size: 24px;
+    cursor: pointer;
+    padding-right: 15px;
+    color: #00c6ff;
+}
+
+.footer-buttons {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.locate-btn, .track-btn {
+    flex: 1;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.locate-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.track-btn {
+    background-color: #4a4a4a;
+    color: white;
+}
+
+
+/* My Vehicle specific styles */
+.container {
+    padding: 20px;
+}
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+}
+
+.top-bar h1 {
+    font-size: 24px;
+    margin: 0;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.image-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.section {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #00c6ff;
+}
+
+.battery-level {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.progress-bar {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    height: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    width: 75%; /* Example: should be dynamic based on battery level */
+    height: 100%;
+    background: linear-gradient(90deg, #00ff8c, #00c6ff);
+    border-radius: 10px;
+}
+
+.location-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.quick-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.info-box {
+    background-color: rgba(255, 255, 255, 0.08);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.info-box .info-label {
+    font-size: 14px;
+    color: #bbb;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Control Panel specific styles */
+.vehicle-image-container {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.vehicle-image {
+    max-width: 80%;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
+}
+
+.actions-section {
+    margin-top: 40px;
+}
+
+.action-row {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+}
+
+.action-icon {
+    margin-right: 15px;
+    width: 30px; /* Fixed width for icons */
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.action-label {
+    flex-grow: 1; /* Take up remaining space */
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.toggle-status {
+    margin-left: 15px;
+    font-size: 14px;
+    color: #ccc;
+    min-width: 30px; /* Ensure space for ON/OFF */
+    text-align: right;
+}
+
+
+/* Responsive */
+@media (max-width: 600px) {
+    .home-buttons {
+        grid-template-columns: 1fr; /* Single column on small screens */
     }
-
-    // Attach click listeners to bottom navigation items if they exist
-    const navItems = document.querySelectorAll('.bottom-nav .nav-item');
-    navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const targetScreen = item.getAttribute('data-target');
-            if (targetScreen) {
-                navigateTo(targetScreen);
-            }
-        });
-    });
-
-    // Handle clicks for buttons inside .home-buttons that navigate
-    const homeButtons = document.querySelectorAll('.home-buttons button');
-    homeButtons.forEach(button => {
-        // Ensure the button has an onclick that is not already handled for navigation
-        // Or remove the inline onclicks and handle all navigation here
-        if (!button.hasAttribute('onclick')) { // Only add if no inline onclick
-            button.addEventListener('click', (event) => {
-                const screenId = event.target.getAttribute('onclick').match(/navigateTo\('([^']+)'\)/);
-                if (screenId && screenId[1]) {
-                    navigateTo(screenId[1]);
-                }
-            });
-        }
-    });
-
-
-    // Add event listeners for the control panel switches if they're purely JS controlled
-    document.querySelectorAll('.control-panel .switch input').forEach(toggle => {
-        toggle.addEventListener('change', (event) => {
-            const statusSpan = event.target.closest('.action-row').querySelector('.toggle-status');
-            if (statusSpan) {
-                statusSpan.textContent = event.target.checked ? 'ON' : 'OFF';
-            }
-        });
-    });
-
-});
+    .login-container {
+        max-width: 90%;
+        margin: 10vh auto;
+    }
+    .entry-container {
+        margin-top: 10vh;
+    }
+    .home-buttons button {
+        min-height: 60px; /* Slightly smaller buttons on mobile */
+    }
+    .bottom-nav {
+        padding: 8px 0;
+    }
+    .bottom-nav .nav-item {
+        font-size: 10px;
+    }
+    .bottom-nav .nav-item i, .bottom-nav .nav-item img, .bottom-nav button img {
+        font-size: 18px;
+        width: 20px;
+        height: 20px;
+    }
+}
